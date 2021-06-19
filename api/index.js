@@ -14,30 +14,30 @@ const api = express.Router();
 //    500 : server error
 module.exports = api;
 
-api.post('/api/vozlogin', async (req, res) => {
+api.get('/api/vozcheck', (req, res) => {
+    res.send("hello ");
+});
 
-    console.log(req.body);
-    var login = req.body['login'];
-    var password = req.body['password'];
-    var xfToken = req.body['_xfToken'];
-    var xfcsrf = req.body['cookie'];
-    var userAgent = req.body['userAgent'];
-     
-    await getLoginToekn(login, password, xfToken, xfcsrf, userAgent,function (body) {
-        res.status(200).send({ 
-            xf_user: body[0].split(';')[0].split('=')[1],
-            date_expire : body[0].split(';')[1].split(',')[1].trim(),
-            xf_session: body[1].split(';')[0].split('=')[1]
-        });
-    }) 
+api.post('/api/vozlogin', async (req, res) => {
+    await getLoginToekn(req.body['login'], req.body['password'], req.body['_xfToken'], req.body['cookie'], req.body['userAgent'], function (body) {
+        
+        if (body == 'null') {
+            res.status(400).send({
+                xf_user: 'incorrect password / or id'
+            })
+        } else {
+            res.status(200).send({
+                xf_user: body[0].split(';')[0].split('=')[1],
+                date_expire: body[0].split(';')[1].split(',')[1].trim(),
+                xf_session: body[1].split(';')[0].split('=')[1]
+            });
+        } 
+    })
+    
 });
 
 
-
-
-
-
-async function getLoginToekn(login, password, xfToken, xf_csrf, userAgent,callback) {
+async function getLoginToekn(login, password, xfToken, xf_csrf, userAgent, callback) {
 
     var form = {
         login: login,
@@ -49,10 +49,12 @@ async function getLoginToekn(login, password, xfToken, xf_csrf, userAgent,callba
     var formData = querystring.stringify(form);
     var contentLength = formData.length;
 
-    request({
+    console.log(formData);
+
+    await request({
         headers: {
             'Content-Length': contentLength,
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Content-Type': 'application/x-www-form-urlencoded',
             'cookie': xf_csrf,
             'user-agent': userAgent,
             'host': 'voz.vn'
@@ -60,18 +62,12 @@ async function getLoginToekn(login, password, xfToken, xf_csrf, userAgent,callba
         uri: 'https://voz.vn/login/login',
         body: formData,
         method: 'POST'
-    }, function (err, res, body) {
-        //it works!
-        callback(res.headers['set-cookie']); 
-        console.log(res.headers['set-cookie'][0].split(';')[0].split('=')[1]); // user
-        console.log(res.headers['set-cookie'][0].split(';')[1].split(',')[1].trim());
-        console.log(res.headers['set-cookie'][1].split(';')[0].split('=')[1]); // session
+    }, async function (err, res, body) { 
+        if (res.headers['set-cookie'] == null) { 
+            callback('null')
+        } else { 
+            callback(res.headers['set-cookie'])
+        } 
     });
 
-
-
-
-
-
 }
-

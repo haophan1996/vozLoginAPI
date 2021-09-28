@@ -20,14 +20,15 @@ api.get('/api/vozcheck', (req, res) => {
 
 
 api.post('/api/vozverification', async (req, res) => {
+    console.log('Request verification/////////////////////////////////');
     console.log(req.body);
+    console.log('End/////////////////////////////////');
     await getLoginVerification(req.body, function (body) {
         if (body['status'] == 'error') {
             res.status(400).send({
                 error: body['error']
             })
-        } else { 
-            console.log(body['data']);
+        } else {  
             if (body['data'].length == 2){
                 res.status(200).send({
                     xf_user: body['data'][0].split(';')[0].split('=')[1],
@@ -53,6 +54,9 @@ api.post('/api/vozlogin', async (req, res) => {
     // var userAgent = req.body['userAgent'];
     //console.log(req.body);
     await getLoginToekn(req.body['login'], req.body['password'], req.body['_xfToken'], req.body['cookie'], req.body['userAgent'], function (body) {
+        console.log('Request login/////////////////////////////////');
+        console.log(req.body);
+        console.log('End/////////////////////////////////');
         if (body == 'errCode') {
             res.status(400).send({
                 xf_user: 'Cannot connect to server voz.vn'

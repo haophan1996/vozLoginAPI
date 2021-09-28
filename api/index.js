@@ -117,7 +117,6 @@ async function getLoginVerification(bodyUser, callback) {
             });
         }
         else if (JSON.parse(body)['status'] == 'error' && res.statusCode == 200) {
-            console.log(JSON.parse(body)['errors'][0]);
             callback({
                 'status': 'error',
                 'error': JSON.parse(body)['errors'][0]
@@ -144,8 +143,6 @@ async function getLoginToekn(login, password, xfToken, xf_csrf, userAgent, callb
 
     var formData = stringify(form);
     var contentLength = formData.length;
-
-    //console.log(formData);
 
     await request({
         headers: {

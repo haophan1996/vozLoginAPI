@@ -12,7 +12,7 @@ app.use(json());
 app.use(api);
 
 api.get('/', (req,res)=>{
-    res.send("hello " + port);
+    res.send("Hello vozer | Api date updated: 09/28/2021 | " + port);
 });
 
 const server = app.listen(port, ()=> {

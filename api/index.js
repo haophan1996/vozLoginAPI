@@ -33,14 +33,12 @@ api.post('/api/vozverification', async (req, res) => {
                     xf_user: body['data'][0].split(';')[0].split('=')[1],
                     date_expire: body['data'][0].split(';')[1].split(',')[1].trim(),
                     xf_session: body['data'][1].split(';')[0].split('=')[1],
-                    bodies = req.body,
                 });
             } else if (body['data'].length == 3){
                 res.status(200).send({
                     xf_user: body['data'][1].split(';')[0].split('=')[1],
                     date_expire: body['data'][1].split(';')[1].split(',')[1].trim(),
                     xf_session: body['data'][2].split(';')[0].split('=')[1],
-                    bodies = req.body,
                 });
             }
         }
@@ -76,7 +74,7 @@ api.post('/api/vozlogin', async (req, res) => {
                 res.status(200).send({
                     type: 1,
                     xf_session: body[0].split(';')[0],
-                    checkData : body,
+                    checkData : body[0], 
                 });
             }
         }
